@@ -11,6 +11,11 @@ from src.data.train_dataset_EDA import (
     find_short_or_empty_comments,
     duplicate_text
 )
+from src.data.EDA_visual import (
+    plot_label_distribution,
+    plot_length_histogram,
+    plot_length_boxplot_per_label,
+    plot_top_words_per_label)
 import pandas as pd
 
 def main():
@@ -81,6 +86,11 @@ def main():
     dups = duplicate_text(df)
     print("\n=== Duplicated Clean Text")
     print(dups[["text", "clean_text", "count"]].head())
+
+    plot_label_distribution(df)
+    plot_length_histogram(df)
+    plot_length_boxplot_per_label(df)
+    plot_top_words_per_label(df)
 
 
 
