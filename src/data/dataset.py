@@ -25,7 +25,6 @@ def get_label_names():
     return label_feature.names
 
 def save_raw_data():
-    print("🚀 Downloading data from Hugging Face...")
     
     # 1. Load the data
     train_df = load_emotion_dataset(split="train")
@@ -35,7 +34,7 @@ def save_raw_data():
     # This will save: 'emotion_train.csv' and 'emotion_test.csv'
     save_dataframes(train_df, test_df, filename_prefix="emotion")
     
-    print("✅ Raw data saved successfully!")
+  
 
 if __name__ == "__main__":
     save_raw_data()
