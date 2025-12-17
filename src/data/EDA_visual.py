@@ -58,3 +58,4 @@ def plot_top_words_per_label(df, top_k: int = 10):
     
     plt.tight_layout
     plt.show()
+    

@@ -133,4 +133,3 @@ def duplicate_text(df):
     duplicates['count'] = duplicates['clean_text'].map(dup_counts)
 
     return duplicates.sort_values(by="count", ascending=False)
-
