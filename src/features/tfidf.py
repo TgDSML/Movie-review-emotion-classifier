@@ -6,9 +6,9 @@ from src.data.train_dataset_EDA import load_train_with_features
 def load_vectorizer_input():
 
     df = load_train_with_features()
-    X_text = df['clean_text']
-    y = df['label'].values
-    return X_text, y
+    X_train_text = df['clean_text']
+    y_train = df['label'].values
+    return X_train_text, y_train 
 
 
 def build_tfidf_vectorizer(
@@ -33,7 +33,7 @@ def fit_tfidf_on_clean_text_column(
         max_features=20000
 ):
     
-    X_text, y = load_vectorizer_input()
+    X_train_text , y_train = load_vectorizer_input()
 
     vectorizer = build_tfidf_vectorizer(
         ngram_range=ngram_range,
@@ -42,16 +42,16 @@ def fit_tfidf_on_clean_text_column(
         max_features=max_features
     )
 
-    X_train = vectorizer.fit_transform(X_text)
+    X_train = vectorizer.fit_transform(X_train_text)
 
-    return vectorizer, X_train, y
+    return vectorizer, X_train, y_train 
 
 def main():
-    vec, X, y = fit_tfidf_on_clean_text_column()
+    vectorizer, X_train, y_train = fit_tfidf_on_clean_text_column()
 
-    print("X shape:", X.shape)
-    print("y shape:", y.shape)
-    print("Vocabulary size:", len(vec.get_feature_names_out()))
+    print("X shape:", X_train.shape)
+    print("y shape:", y_train.shape)
+    print("Vocabulary size:", len(vectorizer.get_feature_names_out()))
 
 
 if __name__ == "__main__":
