@@ -52,6 +52,19 @@ def load_train_with_features():
 
     return df 
 
+
+def load_test_with_features():
+
+    df = load_emotion_dataset(split='test').copy()
+
+    df["char_len"] = df["text"].astype(str).str.len()
+    df["word_len"] = df["text"].astype(str).str.split().str.len()
+
+    df = add_clean_text_column(df)
+    df["clean_word_len"] = df["clean_text"].astype(str).str.split().str.len()
+
+    return df 
+
 def get_length_stats(df):
 
     #overall stats across the entire dataset
