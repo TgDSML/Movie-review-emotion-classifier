@@ -67,6 +67,44 @@ def build_glove_features(
 
     return X_train, y_train, X_test, y_test, tokenizer, embedding_matrix, num_words
 
+
+def sequences_to_vectors(sequences, embedding_matrix):
+    
+    # Gets the size of each word vector
+    # This will be the number of features for Logistic Regression
+    embedding_dim = embedding_matrix.shape[1]
+
+    # Prepares the final feature matrix, shape: (number_of_sentences, embedding_dim)
+    X = np.zeros((len(sequences), embedding_dim))
+
+    
+    
+    # Loop over each sentence where:
+    # i is the sentence index and seq is list of token IDs for the i-th sentence
+    for i, seq in enumerate(sequences):
+        vectors = []
+        for idx in seq:
+            if idx == 0:  # padded position, idx is a word ID
+                # Padded positions got to be ingored so we skip to the next one
+                continue  
+            v = embedding_matrix[idx]  # -> word vector
+            
+            # True if at least one value in v is non-zero
+            # False if ALL values are zero
+            if np.any(v):
+                vectors.append(v)
+            # So if for example a sentence has two words we have 
+            # 2 glove vectors, X is going to be 
+            # vectors = [
+            #    [2, 4],
+            #    [4, 6]
+            #    mean = [(2+4)/2, (4+6)/2] = [3, 5]
+
+            if vectors:
+                X[i] = np.mean(vectors, axis = 0)
+
+        return X 
+
 def main():
     X_train, y_train, X_test, y_test, tokenizer, embedding_matrix, num_words = (
         build_glove_features()
