@@ -93,7 +93,7 @@ def sequences_to_vectors(sequences, embedding_matrix):
             # False if ALL values are zero
             if np.any(v):
                 vectors.append(v)
-            # So if for example a sentence has two words we have 
+            # So if for example a sentence has two words, we have 
             # 2 glove vectors, X is going to be 
             # vectors = [
             #    [2, 4],
@@ -103,7 +103,7 @@ def sequences_to_vectors(sequences, embedding_matrix):
             if vectors:
                 X[i] = np.mean(vectors, axis = 0)
 
-        return X 
+    return X 
 
 def main():
     X_train, y_train, X_test, y_test, tokenizer, embedding_matrix, num_words = (
