@@ -69,57 +69,59 @@ def build_glove_features(
 
 
 def sequences_to_vectors(sequences, embedding_matrix):
-    
-    # Gets the size of each word vector
-    # This will be the number of features for Logistic Regression
+    """
+    Convert padded sequences of token IDs to sentence embeddings using
+    length + mean + max pooling over GloVe word vectors.
+    Resulting shape: (n_sentences, 1 + 2 * embedding_dim)
+    """
     embedding_dim = embedding_matrix.shape[1]
-
-    # Prepares the final feature matrix, shape: (number_of_sentences, embedding_dim)
-    X = np.zeros((len(sequences), embedding_dim))
-
     
-    
-    # Loop over each sentence where:
-    # i is the sentence index and seq is list of token IDs for the i-th sentence
+    # Output dims: [length(1st dim) || mean(next 100 dims) || max(last 100 dims)]
+    X = np.zeros((len(sequences), 1 + 2 * embedding_dim), dtype="float32")
+
     for i, seq in enumerate(sequences):
         vectors = []
+        nonpad_count = 0
+
         for idx in seq:
-            if idx == 0:  # padded position, idx is a word ID
-                # Padded positions got to be ingored so we skip to the next one
-                continue  
-            v = embedding_matrix[idx]  # -> word vector
-            
-            # True if at least one value in v is non-zero
-            # False if ALL values are zero
-            if np.any(v):
-                vectors.append(v)
-            # So if for example a sentence has two words, we have 
-            # 2 glove vectors, X is going to be 
-            # vectors = [
-            #    [2, 4],
-            #    [4, 6]
-            #    mean = [(2+4)/2, (4+6)/2] = [3, 5]
+            # use only valid, non-padding token ids
+            if 0 < idx < embedding_matrix.shape[0]:
+                v = embedding_matrix[idx]
+                if np.any(v):   # skip pure-zero rows (OOV)
+                    vectors.append(v)
+                    nonpad_count += 1
 
-            if vectors:
-                X[i] = np.mean(vectors, axis = 0)
+        if vectors:
+            vectors = np.vstack(vectors)              # (n_words, emb_dim)
+            mean_vec = np.mean(vectors, axis=0)       # (mean of words in sentence)
+            max_vec  = np.max(vectors, axis=0)        # (most semantically signifant word per sentence)
+            length   = np.array([nonpad_count], dtype="float32")  # (1,)
+            X[i] = np.concatenate([length, mean_vec, max_vec], axis=0)
 
-    return X 
+        # if no valid vectors, row stays zeros
+
+    return X
+
+
 
 def main():
-    X_train, y_train, X_test, y_test, tokenizer, embedding_matrix, num_words = (
+    X_train_seq, y_train_glove, X_test_seq, y_test_glove, tokenizer, embedding_matrix, num_words = (
         build_glove_features()
     )
 
-    print("X_train shape:", X_train.shape)
-    print("X_test shape:", X_test.shape)
-    print("y_train shape:", y_train.shape)
-    print("y_test shape:", y_test.shape)
+    print("X_train_seq shape:", X_train_seq.shape)
+    print("X_test_seq shape:", X_test_seq.shape)
+    print("y_train_glove shape:", y_train_glove.shape)
+    print("y_test_glove shape:", y_test_glove.shape)
+    
+    # NEW: sequences_to_vectors dimensions
+    print("X_train_glove shape:", sequences_to_vectors(X_train_seq, embedding_matrix).shape)
+    print("X_test_glove shape:", sequences_to_vectors(X_test_seq, embedding_matrix).shape)
+    
     print("Embedding matrix shape:", embedding_matrix.shape)
     print("num_words:", num_words)
 
-
 if __name__ == "__main__":
     main()
-
 
 
