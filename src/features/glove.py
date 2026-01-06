@@ -5,7 +5,7 @@ import numpy as np
 
 def build_glove_tokenizer_and_matrix(
     texts,
-    glove_path="notebooks/glove.6B.100d.txt",
+    glove_path="data/glove.6B.100d.txt",
     max_words=20000,
     embedding_dim=100,
 ):
@@ -35,6 +35,7 @@ def build_glove_tokenizer_and_matrix(
 def build_glove_features(
     max_words=20000,
     embedding_dim=100,
+    glove_path='data/glove.6B.100d.txt',
     max_len=100,
 ):
     train_path = "data/emotion_processed_train.csv"
@@ -51,7 +52,7 @@ def build_glove_features(
 
     tokenizer, embedding_matrix, num_words = build_glove_tokenizer_and_matrix(
         texts=texts_train,
-        glove_path="notebooks/glove.6B.100d.txt",
+        glove_path=glove_path,
         max_words=max_words,
         embedding_dim=embedding_dim,
     )
