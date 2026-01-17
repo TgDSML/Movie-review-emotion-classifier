@@ -12,7 +12,7 @@ The project is developed in a **research‑style, modular way**, combining explo
 * Compare **different text representations**:
 
   * TF‑IDF
-  * GloVe embeddings
+  * Word embeddings like Word2Vec and Glove
 * Train and evaluate **classical machine learning models** (Logistic Regression)
 * Build a **clean, reproducible ML pipeline** suitable for academic work
 
