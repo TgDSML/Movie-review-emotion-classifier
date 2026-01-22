@@ -68,6 +68,42 @@ def build_glove_features(
 
     return X_train, y_train, X_test, y_test, tokenizer, embedding_matrix, num_words
 
+def build_glove_features_from_dfs(
+    train_df,
+    test_df,
+    text_col="clean_text",
+    label_col="label",
+    max_words=20000,
+    embedding_dim=100,
+    glove_path="data/glove.6B.100d.txt",
+    max_len=100,
+):
+    # This function is flexible, uses the dataframes we pass 
+    texts_train = train_df[text_col].astype(str).tolist()
+    texts_test  = test_df[text_col].astype(str).tolist()
+
+    y_train = train_df[label_col].to_numpy(dtype="int64").ravel()
+    y_test  = test_df[label_col].to_numpy(dtype="int64").ravel()
+
+    tokenizer, embedding_matrix, num_words = build_glove_tokenizer_and_matrix(
+        texts=texts_train,
+        glove_path=glove_path,
+        max_words=max_words,
+        embedding_dim=embedding_dim,
+    )
+
+    X_train = pad_sequences(
+        tokenizer.texts_to_sequences(texts_train),
+        maxlen=max_len,
+    )
+    X_test = pad_sequences(
+        tokenizer.texts_to_sequences(texts_test),
+        maxlen=max_len,
+    )
+
+    return X_train, y_train, X_test, y_test, tokenizer, embedding_matrix, num_words
+
+
 
 def sequences_to_vectors(sequences, embedding_matrix):
     """

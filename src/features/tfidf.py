@@ -10,6 +10,11 @@ def load_vectorizer_input():
     y_train = df['label'].values
     return X_train_text, y_train 
 
+def load_vectorizer_input_from_df(df, text_col="clean_text", label_col="label"):
+    X_text = df[text_col]
+    y = df[label_col].values
+    return X_text , y 
+
 
 def build_tfidf_vectorizer(
         ngram_range = (1,2),
@@ -45,6 +50,28 @@ def fit_tfidf_on_clean_text_column(
     X_train = vectorizer.fit_transform(X_train_text)
 
     return vectorizer, X_train, y_train 
+
+def fit_tfidf_on_any_dataframe(
+        df,
+        text_col="clean_text",
+        label_col="label",
+        ngram_range=(1,2),
+        min_df=2,
+        max_df=0.95,
+        max_features=20000
+):
+    X_text, y = load_vectorizer_input_from_df(df, text_col=text_col, label_col=label_col)
+
+    vectorizer = build_tfidf_vectorizer(
+        ngram_range=ngram_range,
+        min_df=min_df,
+        max_df=max_df,
+        max_features=max_features
+    )
+
+    X = vectorizer.fit_transform(X_text)
+
+    return vectorizer, X, y 
 
 def main():
     vectorizer, X_train, y_train = fit_tfidf_on_clean_text_column()
