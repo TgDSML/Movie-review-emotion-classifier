@@ -54,14 +54,24 @@ class TextAugmenter:
             Builds a simple EDA-like pipeline using nlpaug.
             We use WordNet synonyms + small random noise operations.
             """
-
+            NEGATIONS = {"not", "no", "never", "n't", "cannot"}
             STOPWORDS = {"it", "i", "a", "an", "the", "to", "of", "in", "on", "for", "and", "or", "is", "are", "was", "were"}
+            EMOTION_WORDS = {
+            "happy","joy","joyful","glad",
+            "sad","unhappy","depressed","cry",
+            "angry","mad","furious","rage",
+            "fear","scared","afraid","terrified",
+            "surprised","shocked","amazed",
+            "disgust","disgusted","gross","nasty"
+            }
+
+            STOPWORDS = STOPWORDS | NEGATIONS | EMOTION_WORDS
 
             aug_syn = naw.SynonymAug(
             aug_src="wordnet",
             stopwords=list(STOPWORDS),
-            aug_p=0.1,
-            aug_max=2
+            aug_p=0.05,
+            aug_max=1
             )           
 
             
@@ -71,8 +81,10 @@ class TextAugmenter:
 
             
 
+            
+
             # Order is crucial: synonyms first then light noise
-            return Sequential([aug_syn, aug_swap])
+            return Sequential([aug_syn])
 
         def augment_text(self, text:str) -> List[str]:
             """
