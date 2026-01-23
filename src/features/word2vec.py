@@ -83,6 +83,67 @@ def fit_w2v_on_clean_text_column(
 
     return tokenizer, embedding_matrix, X_train_padded, y_train
 
+
+def fit_w2v_on_dataframe(
+    df,
+    text_col="clean_text",
+    label_col="label",
+    vector_size=100,
+    window=5,
+    min_count=2,
+    max_words=20000,
+    max_len=100,
+):
+    """
+    Data-driven Word2Vec pipeline:
+    trains Word2Vec + builds tokenizer/sequences/embedding_matrix on the provided df.
+    This is what enables augmentation/balancing experiments.
+    """
+    texts = df[text_col].astype(str).tolist()
+    y = df[label_col].values
+
+    # 1) Train Word2Vec model on THESE texts
+    w2v_model = build_and_train_w2v_model(
+        texts,
+        vector_size=vector_size,
+        window=window,
+        min_count=min_count,
+    )
+
+    # 2) Fit tokenizer on THESE texts
+    tokenizer = Tokenizer(num_words=max_words, oov_token="<UNK>")
+    tokenizer.fit_on_texts(texts)
+
+    # 3) Convert to sequences + pad
+    sequences = tokenizer.texts_to_sequences(texts)
+    X_seq = pad_sequences(sequences, maxlen=max_len, padding="post", truncating="post")
+
+    # 4) Create embedding matrix aligned with tokenizer indices
+    embedding_matrix = create_embedding_matrix(tokenizer, w2v_model, embedding_dim=vector_size)
+
+    return tokenizer, embedding_matrix, X_seq, y
+
+
+def sequences_to_mean_max_vectors(X_seq, embedding_matrix):
+
+    vectors = []
+    embedding_dim = embedding_matrix.shape[1]
+
+    for seq in X_seq:
+        valid = seq[seq>0] # removes padding (not helpful for linear classifier)
+
+        if len(valid) == 0:
+            mean_vec = np.zeros(embedding_dim)
+            max_vec = np.zeros(embedding_dim)
+        else:
+            word_vecs = embedding_matrix[valid]
+            mean_vec = word_vecs.mean(axis=0)
+            max_vec = word_vecs.max(axis=0)
+        
+        vectors.append(np.concatenate([mean_vec, max_vec]))
+
+    return np.vstack(vectors)
+
 def main():
     tokenizer, embedding_matrix, X_train, y_train = fit_w2v_on_clean_text_column()
 
