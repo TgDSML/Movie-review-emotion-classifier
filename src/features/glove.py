@@ -106,37 +106,24 @@ def build_glove_features_from_dfs(
 
 
 def sequences_to_vectors(sequences, embedding_matrix):
-    """
-    Convert padded sequences of token IDs to sentence embeddings using
-    length + mean + max pooling over GloVe word vectors.
-    Resulting shape: (n_sentences, 1 + 2 * embedding_dim)
-    """
     embedding_dim = embedding_matrix.shape[1]
-    
-    # Output dims: [length(1st dim) || mean(next 100 dims) || max(last 100 dims)]
-    X = np.zeros((len(sequences), 1 + 2 * embedding_dim), dtype="float32")
+    # We will output Mean + Max (Size = 2 * dim)
+    X = np.zeros((len(sequences), 2 * embedding_dim), dtype="float32")
 
     for i, seq in enumerate(sequences):
         vectors = []
-        nonpad_count = 0
-
         for idx in seq:
-            # use only valid, non-padding token ids
-            if 0 < idx < embedding_matrix.shape[0]:
+            if 0 < idx < embedding_matrix.shape[0]: # Valid index
                 v = embedding_matrix[idx]
-                if np.any(v):   # skip pure-zero rows (OOV)
+                if np.any(v):
                     vectors.append(v)
-                    nonpad_count += 1
 
         if vectors:
-            vectors = np.vstack(vectors)              # (n_words, emb_dim)
-            mean_vec = np.mean(vectors, axis=0)       # (mean of words in sentence)
-            max_vec  = np.max(vectors, axis=0)        # (most semantically signifant word per sentence)
-            length   = np.array([nonpad_count], dtype="float32")  # (1,)
-            X[i] = np.concatenate([length, mean_vec, max_vec], axis=0)
-
-        # if no valid vectors, row stays zeros
-
+            vectors = np.vstack(vectors)
+            mean_vec = np.mean(vectors, axis=0)
+            max_vec  = np.max(vectors, axis=0)
+            X[i] = np.concatenate([mean_vec, max_vec])
+        # Else leaves zeros
     return X
 
 

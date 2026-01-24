@@ -1,16 +1,10 @@
 import os
-# Disable Intel optimizations to prevent freezing/warnings
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 import numpy as np
 from gensim.models import Word2Vec
 from gensim.utils import simple_preprocess
-import tensorflow as tf
 from src.data.train_dataset_EDA import load_train_with_features
-
-# Using full path for stability
-Tokenizer = tf.keras.preprocessing.text.Tokenizer
-pad_sequences = tf.keras.preprocessing.sequence.pad_sequences
 
 def load_w2v_input():
     df = load_train_with_features()
@@ -26,70 +20,63 @@ def build_and_train_w2v_model(
         workers=4,
         epochs=10
 ):
-    # Preprocess: Convert list of strings to list of lists of tokens
+    # Preprocess
     tokenized_sentences = [simple_preprocess(text) for text in texts]
     
-    # Initialize and Train
+    # Initialize AND Train (Gensim does this automatically if 'sentences' is passed)
+    
     model = Word2Vec(
         sentences=tokenized_sentences,
         vector_size=vector_size,
         window=window,
         min_count=min_count,
         workers=workers,
-        sg=1 # Skip-gram
+        sg=1,  # Skip-gram is usually better for smaller datasets
+        epochs=epochs 
     )
     
-    model.train(tokenized_sentences, total_examples=len(tokenized_sentences), epochs=epochs)
+    # REMOVED: model.train(...) -> It was redundant!
     return model
 
-def create_embedding_matrix(tokenizer, w2v_model, embedding_dim):
-    vocab_size = len(tokenizer.word_index) + 1
-    embedding_matrix = np.zeros((vocab_size, embedding_dim))
-    
-    for word, i in tokenizer.word_index.items():
-        if word in w2v_model.wv:
-            embedding_matrix[i] = w2v_model.wv[word]
+# --- NEW FUNCTION FOR LOGISTIC REGRESSION ---
+def get_mean_vectors(w2v_model, texts):
+    """
+    Returns [Mean_Vector, Max_Vector] concatenated. 
+    New Shape: (n_samples, 200)
+    """
+    matrix = []
+    for text in texts:
+        tokens = simple_preprocess(str(text))
+        valid_vectors = [w2v_model.wv[word] for word in tokens if word in w2v_model.wv]
+        
+        if valid_vectors:
+            valid_vectors = np.array(valid_vectors)
+            mean_vec = np.mean(valid_vectors, axis=0)
+            max_vec = np.max(valid_vectors, axis=0) # Captures the strongest signal
+            # Stack them together
+            final_vec = np.concatenate([mean_vec, max_vec])
+        else:
+            # Return zeros of double size
+            final_vec = np.zeros(w2v_model.vector_size * 2)
             
-    return embedding_matrix
+        matrix.append(final_vec)
+    return np.array(matrix)
 
-def fit_w2v_on_clean_text_column(
-        vector_size=100,
-        window=5,
-        min_count=2,
-        max_words=20000,
-        max_len=100
-):
-    
+def fit_w2v_for_classic_ml(vector_size=100):
     X_train_text, y_train = load_w2v_input()
 
-    # 1. Train Word2Vec Model
+    # 1. Train Word2Vec
     w2v_model = build_and_train_w2v_model(
         X_train_text, 
-        vector_size=vector_size, 
-        window=window, 
-        min_count=min_count
+        vector_size=vector_size
     )
 
-    # 2. Fit Keras Tokenizer (Mapping words to Integers)
-    tokenizer = Tokenizer(num_words=max_words, oov_token="<UNK>")
-    tokenizer.fit_on_texts(X_train_text)
+    # 2. Convert Text -> Mean Vectors (The "Bridge" for Logistic Regression)
+    X_train_averaged = get_mean_vectors(w2v_model, X_train_text)
 
-    # 3. Create Sequences (The X input for the Neural Network)
-    sequences = tokenizer.texts_to_sequences(X_train_text)
-    X_train_padded = pad_sequences(sequences, maxlen=max_len, padding='post', truncating='post')
-
-    # 4. Build Embedding Matrix (The Weights for the Neural Network)
-    embedding_matrix = create_embedding_matrix(tokenizer, w2v_model, embedding_dim=vector_size)
-
-    return tokenizer, embedding_matrix, X_train_padded, y_train
-
-def main():
-    tokenizer, embedding_matrix, X_train, y_train = fit_w2v_on_clean_text_column()
-
-    print("X_train (padded) shape:", X_train.shape)
-    print("y_train shape:", y_train.shape)
-    print("Embedding Matrix shape:", embedding_matrix.shape)
-    print("Vocabulary size:", len(tokenizer.word_index))
+    return w2v_model, X_train_averaged, y_train
 
 if __name__ == "__main__":
-    main()
+    model, X_avg, y = fit_w2v_for_classic_ml()
+    print("X_train (averaged) shape:", X_avg.shape) 
+    # Should be (16000, 100) -> Ready for Logistic Regression!
