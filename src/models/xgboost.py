@@ -35,7 +35,17 @@ def train_xgboost(X_train, y_train, X_test, y_test, feature_name):
     # Evaluate
     preds = model.predict(X_test)
     acc = accuracy_score(y_test_enc, preds)
-    print(f"Accuracy ({feature_name}): {acc:.2%}")
+    
+    # --- PRINT CLASSIFICATION REPORT ---
+    print(f"\n{'='*40}")
+    print(f"📊 Results for: {feature_name}")
+    print(f"{'='*40}")
+    print(f"Accuracy: {acc:.2%}")
+    print("-" * 40)
+    print("Classification Report:")
+    # digits=4 gives you 4 decimal places (e.g., 0.9321) like your friend's report
+    print(classification_report(y_test_enc, preds, digits=4))
+    print(f"{'='*40}\n")
     
     return acc, model
 

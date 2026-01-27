@@ -2,17 +2,15 @@ import numpy as np
 import pandas as pd
 from gensim.models import Word2Vec
 from gensim.utils import simple_preprocess
-
-# --- IMPORTS FOR TEAMMATE'S CODE ---
 try:
     from tensorflow.keras.preprocessing.text import Tokenizer
     from tensorflow.keras.preprocessing.sequence import pad_sequences
 except ImportError:
     pass # If tensorflow isn't installed, these imports fail silently
 
-# ==========================================
+
 # 1. SHARED CORE FUNCTIONS (The missing tools!)
-# ==========================================
+
 
 def train_word2vec(texts, vector_size=100, window=5, min_count=2, epochs=10):
     """
@@ -58,9 +56,9 @@ def get_mean_vectors(w2v_model, texts):
         matrix.append(final_vec)
     return np.array(matrix)
 
-# ==========================================
-# 2. TEAMMATE'S NEURAL NETWORK FUNCTIONS
-# ==========================================
+
+# thodoris neural network functions
+
 
 def create_embedding_matrix(tokenizer, w2v_model, embedding_dim):
     vocab_size = len(tokenizer.word_index) + 1
@@ -105,9 +103,7 @@ def sequences_to_mean_max_vectors(X_seq, embedding_matrix):
         vectors.append(np.concatenate([mean_vec, max_vec]))
     return np.vstack(vectors)
 
-# ==========================================
-# 3. YOUR TUNED XGBOOST FUNCTION
-# ==========================================
+# TUNED XGBOOST FUNCTION
 
 def fit_w2v_for_classic_ml(vector_size=300):
     """
