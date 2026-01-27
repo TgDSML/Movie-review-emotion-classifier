@@ -12,6 +12,7 @@ from sklearn.preprocessing import LabelEncoder
 from src.data.train_dataset_EDA import load_train_with_features, load_test_with_features
 from src.features.tfidf import fit_tfidf_on_any_dataframe
 from src.data.augmentation import AugmentConfig, class_balanced_augment
+from src.data.preprocess import clean_text
 
 # Artifacts directory
 ARTIFACTS_DIR = Path("artifacts_xgb") / "final_tfidf_xgboost_aug"
@@ -19,7 +20,7 @@ ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 
 LABEL_MAP = {0: "sadness", 1: "joy", 2: "love", 3: "anger", 4: "fear", 5: "surprise"}
 
-def save_artifacts(model, vectorizer, encoder, metrics, config, label_map):
+def save_artifacts(model, vectorizer, encoder, metrics, config, label_map, sample_predictions):
     # Save XGBoost Model
     model.save_model(ARTIFACTS_DIR / "model.json")
     print(f" Model saved to {ARTIFACTS_DIR / 'model.json'}")
@@ -32,6 +33,11 @@ def save_artifacts(model, vectorizer, encoder, metrics, config, label_map):
     with open(ARTIFACTS_DIR / "metrics.json", "w") as f: json.dump(metrics, f, indent=2)
     with open(ARTIFACTS_DIR / "config.json", "w") as f: json.dump(config, f, indent=2)
     with open(ARTIFACTS_DIR / "label_map.json", "w") as f: json.dump(label_map, f, indent=2)
+
+    # NEW: Save Sample Predictions
+    with open(ARTIFACTS_DIR / "predictions.json", "w") as f: 
+        json.dump(sample_predictions, f, indent=2)
+    print(f" Sample predictions saved to {ARTIFACTS_DIR / 'predictions.json'}")
 
 def train_and_save():
     print("=" * 70)
@@ -79,7 +85,37 @@ def train_and_save():
     }
     config = {"model": "XGBoost", "n_estimators": 100, "max_depth": 6, "augmentation": "EDA"}
 
-    save_artifacts(model, vectorizer, le, metrics, config, LABEL_MAP)
+    # --- NEW: Generate Sample Predictions for predictions.json ---
+    print("\n Generating sample predictions receipt...")
+    sample_texts = [
+        "This movie was absolutely amazing! I loved every second of it.",
+        "I hated this film. It was boring and predictable.",
+        "The acting was okay but the plot was confusing.",
+        "I'm not sure how I feel about this movie."
+    ]
+    
+    cleaned_samples = [clean_text(t) for t in sample_texts]
+    X_sample = vectorizer.transform(cleaned_samples)
+    probs_matrix = model.predict_proba(X_sample)
+    
+    sample_output = []
+    for text, probs in zip(sample_texts, probs_matrix):
+        pred_idx = probs.argmax()
+        conf = float(probs.max())
+        status = "accepted" if conf >= 0.50 else "uncertain"
+        
+        prob_dict = {LABEL_MAP[i]: float(p) for i, p in enumerate(probs)}
+        
+        sample_output.append({
+            "text": text,
+            "prediction_label": LABEL_MAP[pred_idx],
+            "confidence": conf,
+            "status": status,
+            "probabilities": prob_dict
+        })
+    # -------------------------------------------------------------
+
+    save_artifacts(model, vectorizer, le, metrics, config, LABEL_MAP, sample_output)
     print("\n Pipeline Complete!")
 
 if __name__ == "__main__":
