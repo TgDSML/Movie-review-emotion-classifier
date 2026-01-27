@@ -29,3 +29,13 @@ Thumbs.db
 
 /data/
 notebooks/glove.6B*
+
+
+# Artifacts
+artifacts/
+artifacts_lr/
+artifacts_xgb/
+*.pkl
+*.json
+*.h5
+*.model
