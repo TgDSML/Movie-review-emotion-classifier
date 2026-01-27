@@ -10,9 +10,9 @@ import random
 import json
 from pathlib import Path
 
-from scripts.infer import predict   # reuse your inference pipeline
+from scripts_lr.infer import predict   # reuse your inference pipeline
 
-LABEL_MAP_PATH = Path("artifacts") / "final_tfidf_lr_aug" / "label_map.json"
+LABEL_MAP_PATH = Path("artifacts_lr") / "final_tfidf_lr_aug" / "label_map.json"
 with open(LABEL_MAP_PATH, "r") as f:
     LABEL_MAP = {int(k): v for k, v in json.load(f).items()}
 

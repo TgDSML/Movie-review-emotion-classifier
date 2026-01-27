@@ -15,7 +15,7 @@ from src.data.augmentation import AugmentConfig, class_balanced_augment
 
 
 # Define artifact output directory for this specific pipeline
-ARTIFACTS_DIR = Path("artifacts") / "final_tfidf_lr_aug"
+ARTIFACTS_DIR = Path("artifacts_lr") / "final_tfidf_lr_aug"
 ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 LABEL_MAP = {
     0: "sadness",

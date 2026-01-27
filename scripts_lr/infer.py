@@ -15,7 +15,7 @@ from src.data.preprocess import clean_text
 
 
 # Path to trained artifacts
-ARTIFACTS_DIR = Path("artifacts") / "final_tfidf_lr_aug"
+ARTIFACTS_DIR = Path("artifacts_lr") / "final_tfidf_lr_aug"
 
 
 def assert_artifacts_exist():
@@ -169,7 +169,7 @@ if __name__ == "__main__":
     print_results(results)
     
     # Optionally save results to JSON
-    output_file = Path("artifacts") / "predictions.json"
+    output_file = Path("artifacts_lr") / "predictions.json"
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
     print(f"\n Results saved to {output_file}")

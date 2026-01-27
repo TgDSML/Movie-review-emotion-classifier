@@ -1,0 +1,66 @@
+[
+  {
+    "text": "This movie was absolutely amazing! I loved every second of it.",
+    "truncated": false,
+    "prediction_id": 5,
+    "prediction_label": "surprise",
+    "confidence": 0.7428447680485017,
+    "status": "accepted",
+    "probabilities": {
+      "sadness": 0.025529308269096645,
+      "joy": 0.07432711363469016,
+      "love": 0.10663884107646827,
+      "anger": 0.021579875433745434,
+      "fear": 0.029080093537497687,
+      "surprise": 0.7428447680485017
+    }
+  },
+  {
+    "text": "I hated this film. It was boring and predictable.",
+    "truncated": false,
+    "prediction_id": 0,
+    "prediction_label": "sadness",
+    "confidence": 0.4272786656243191,
+    "status": "uncertain",
+    "probabilities": {
+      "sadness": 0.4272786656243191,
+      "joy": 0.028662823209370906,
+      "love": 0.017411821768128496,
+      "anger": 0.4154832346199892,
+      "fear": 0.01987214236041118,
+      "surprise": 0.09129131241778102
+    }
+  },
+  {
+    "text": "The acting was okay but the plot was confusing.",
+    "truncated": false,
+    "prediction_id": 5,
+    "prediction_label": "surprise",
+    "confidence": 0.24779510747246347,
+    "status": "uncertain",
+    "probabilities": {
+      "sadness": 0.15062068652023936,
+      "joy": 0.1479002514868437,
+      "love": 0.08595207451117928,
+      "anger": 0.17901257281712715,
+      "fear": 0.1887193071921471,
+      "surprise": 0.24779510747246347
+    }
+  },
+  {
+    "text": "I'm not sure how I feel about this movie.",
+    "truncated": false,
+    "prediction_id": 1,
+    "prediction_label": "joy",
+    "confidence": 0.29690661501205945,
+    "status": "uncertain",
+    "probabilities": {
+      "sadness": 0.06132284333721549,
+      "joy": 0.29690661501205945,
+      "love": 0.07962736785292678,
+      "anger": 0.06874431334961671,
+      "fear": 0.2109261424557714,
+      "surprise": 0.28247271799241014
+    }
+  }
+]

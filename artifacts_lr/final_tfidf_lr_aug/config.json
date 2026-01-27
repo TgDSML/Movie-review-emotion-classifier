@@ -1,0 +1,25 @@
+{
+  "model_type": "LogisticRegression",
+  "feature_extractor": "TfidfVectorizer",
+  "augmentation": {
+    "mode": "eda",
+    "n_aug_per_sample": 1,
+    "keep_original": true,
+    "seed": 42
+  },
+  "tfidf_params": {
+    "ngram_range": [
+      1,
+      2
+    ],
+    "min_df": 2,
+    "max_df": 0.95,
+    "max_features": 20000
+  },
+  "logistic_regression_params": {
+    "max_iter": 1000,
+    "solver": "lbfgs",
+    "class_weight": "balanced",
+    "random_state": 42
+  }
+}
