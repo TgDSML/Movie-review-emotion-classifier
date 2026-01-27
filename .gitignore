@@ -28,10 +28,7 @@ dist/
 Thumbs.db
 
 /data/
-<<<<<<< Updated upstream
-notebooks/glove.6B*
-
-
+glove.6B*
 # Artifacts
 artifacts/
 artifacts_lr/
@@ -40,6 +37,3 @@ artifacts_xgb/
 *.json
 *.h5
 *.model
-=======
-glove.6B*
->>>>>>> Stashed changes
