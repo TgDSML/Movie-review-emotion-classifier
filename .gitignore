@@ -33,6 +33,7 @@ glove.6B*
 artifacts/
 artifacts_lr/
 artifacts_xgb/
+artifacts_svm
 *.pkl
 *.json
 *.h5
