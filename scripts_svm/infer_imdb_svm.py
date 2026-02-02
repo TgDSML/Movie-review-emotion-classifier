@@ -34,7 +34,7 @@ def main():
     results = predict_svm(texts, confidence_threshold=0.80)
 
     for r in results:
-        print("\nText:", r["text"][:200], "...")
+        print("\nText:", r["text"])
         print(f"Prediction: {r['prediction_label']} (id={r['prediction_id']})")
         print("Confidence:", round(r["confidence"], 2))
         print("Status:", r["status"])

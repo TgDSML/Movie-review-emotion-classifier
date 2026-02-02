@@ -26,7 +26,7 @@ def main():
 
     for r in results:
         print("-" * 60)
-        print(f"Text: {r['text'][:150]} ...")
+        print(f"Text: {r['text']}")
         print(f" Prediction: {r['prediction'].upper()}")
         print(f" Confidence: {r['confidence']:.2f} [{r['status']}]")
         top3 = sorted(r['probabilities'].items(), key=lambda x: x[1], reverse=True)[:3]

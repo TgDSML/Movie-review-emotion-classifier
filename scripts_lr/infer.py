@@ -95,8 +95,8 @@ def predict(texts, model=None, vectorizer=None, confidence_threshold=0.50):
     # Format output with confidence and probabilities
     results = []
     for orig_text, pred, probs in zip(texts, predictions, probabilities):
-        text_display = orig_text[:100]
-        truncated = len(orig_text) > 100
+        text_display = orig_text
+        truncated = False
         confidence = float(probs.max())
         
         # Determine status based on confidence threshold
