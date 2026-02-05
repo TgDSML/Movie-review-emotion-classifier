@@ -41,9 +41,9 @@ def plot_length_boxplot_per_label(df):
     plt.tight_layout
     plt.show()
 
-def plot_top_words_per_label(df, top_k: int = 10):
+def plot_top_words_per_label(df, top_k: int = 10, exclude_top_global: int = 0):
 
-    per_label = get_most_common_words_per_label(df, top_k=top_k)
+    per_label = get_most_common_words_per_label(df, top_k=top_k, exclude_top_global=exclude_top_global)
     num_labels = len(Label_map)
 
     plt.figure(figsize=(16,10))
@@ -53,7 +53,10 @@ def plot_top_words_per_label(df, top_k: int = 10):
 
         plt.subplot(2, 3, i)
         plt.bar(words, counts)
-        plt.title(Label_map[label_id])
+        title = Label_map[label_id]
+        if exclude_top_global > 0:
+            title += f" (top {exclude_top_global} global excluded)"
+        plt.title(title)
         plt.xticks(rotation=45)
     
     plt.tight_layout

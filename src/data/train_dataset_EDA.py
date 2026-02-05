@@ -107,7 +107,25 @@ def get_most_common_words_overall(df, top_k: int = 20):
     counter = Counter(all_words)
     return counter.most_common(top_k)
 
-def get_most_common_words_per_label(df, top_k: int = 10):
+def get_most_common_words_per_label(df, top_k: int = 10, exclude_top_global: int = 0):
+    """
+    Get the most common words per label, optionally excluding top-N global words.
+    
+    Args:
+        df: DataFrame containing 'label' and 'clean_text' columns
+        top_k: Number of top words to return per label
+        exclude_top_global: If > 0, exclude the top-N most frequent words globally
+                           This helps see more distinctive words per emotion
+    
+    Returns:
+        Dictionary mapping label_id to list of (word, count) tuples
+    """
+    
+    # Get global words to exclude if requested
+    exclude_set = set()
+    if exclude_top_global > 0:
+        global_words = get_most_common_words_overall(df, top_k=exclude_top_global)
+        exclude_set = {word for word, count in global_words}
 
     results = {}
 
@@ -126,7 +144,11 @@ def get_most_common_words_per_label(df, top_k: int = 10):
         #Counter creates a frequency dictionary
         #like, {'sad': 230, "miss": 195,...}
         counter = Counter(words)
-
+        
+        # Filter out excluded words if needed
+        if exclude_set:
+            counter = Counter({word: count for word, count in counter.items() 
+                             if word not in exclude_set})
 
         results[label_id] = counter.most_common(top_k)
 
