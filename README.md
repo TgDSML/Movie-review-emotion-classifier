@@ -61,8 +61,9 @@ Movie-review-emotion-classifier/
 │ └── infer_svm.py
 │
 ├── scripts_xgb/ # XGBoost experiments
-│ ├── train_save_final_xgb.py
-│ └── infer_xgb.py
+│ ├── infer_movie_mood.py
+  ├── infer_xgb.py
+│ └── train_save_final_xgb.py
 │
 ├── src/ # reusable pipeline components
 │ ├── data/
@@ -146,7 +147,7 @@ These notebooks are **not required** to run the training or inference pipelines,
 
 ##  Models Implemented
 
-- **Logistic Regression** (baseline & best performing)
+- **Logistic Regression**
 - **Linear SVM**
 - **XGBoost**
 
@@ -180,15 +181,15 @@ These notebooks are **not required** to run the training or inference pipelines,
 - Accuracy: **0.8725**
 - Macro-averaged F1-score: **0.8252**
 
-** TF-IDF (unigrams + bigrams) + Linear SVM **
+**TF-IDF (unigrams + bigrams) + Linear SVM**
 
 - Accuracy: **0.8590**
 - Macro-averaged F1-score: **0.8009**
 
 **TF-IDF (unigrams + bigrams) + XGBOOST + Data Augmentation**
 
-- AccuracyQ **0.88**
-- Macro-averaged F1-score: **0.850141**
+- Accuracy: **0.8800**
+- Macro-averaged F1-score: **0.8501**
 
 
 ##  Installation & Setup
@@ -240,6 +241,16 @@ python scripts_svm/infer_svm.py
 
 # XGBoost inference
 python scripts_xgb/infer_xgb.py
+
+---
+
+##  Interactive Real-World Application ("Vibe Check")
+Runs the interactive CLI app that combines the ML model with a **heuristic logic layer**.
+This distinguishes context (e.g., "Action" vs. "Trash" for Anger, or "Comedy" vs. "Romance" for Joy).
+
+# XGBoost Interactive App (Recommended)
+python scripts_xgb/infer_movie_mood.py
+
 
 ---
 
