@@ -1,20 +1,36 @@
-# 🎬 Movie Review Emotion Classifier
+#  Movie Review Emotion Classifier
 
-This repository contains a **machine learning project for emotion classification in text**, with a focus on **movie reviews and social media comments**. Unlike classic sentiment analysis (positive/negative), this project aims to predict **fine‑grained emotions** such as *joy, sadness, anger, fear,* etc.
+Machine learning project for **emotion classification from text**, with emphasis on **movie reviews** and short social-media style texts.  
+Unlike binary sentiment analysis (positive/negative), this project focuses on **fine-grained emotion recognition** across six emotional categories.
 
-The project is developed in a **research‑style, modular way**, combining exploratory notebooks with reusable Python modules.
+The repository is structured in a **research-oriented and reproducible way**, combining exploratory notebooks with reusable training and inference scripts.
+
+---
+
+##  Problem Description
+
+Given a piece of text (e.g. a movie review), the goal is to classify it into one of the following **six emotion classes**:
+
+- `sadness`
+- `joy`
+- `love`
+- `anger`
+- `fear`
+- `surprise`
+
+The task is formulated as a **multiclass text classification problem** under class imbalance.
 
 ---
 
 ## 📌 Project Objectives
 
-* Perform **emotion classification** on text data
-* Compare **different text representations**:
-
-  * TF‑IDF
-  * Word embeddings like Word2Vec and Glove
-* Train and evaluate **classical machine learning models** (Logistic Regression)
-* Build a **clean, reproducible ML pipeline** suitable for academic work
+- Perform **emotion classification** on textual data
+- Compare different **text representations**:
+  - TF-IDF (unigrams & bigrams)
+  - Word embeddings (Word2Vec, GloVe)
+- Train and evaluate **classical machine learning models**
+- Apply **data augmentation** to mitigate class imbalance
+- Build a **clean, end-to-end ML pipeline** suitable for MSc-level coursework
 
 ---
 
@@ -23,31 +39,44 @@ The project is developed in a **research‑style, modular way**, combining explo
 ```
 Movie-review-emotion-classifier/
 │
-├── data/
-│   ├── *_train.csv
-│   ├── *_test.csv
-│   └── (processed datasets generated during experiments)
+├── data/ # raw & processed datasets
+│ ├── emotion_train.csv
+│ ├── emotion_test.csv
+│ ├── emotion_processed_train.csv
+│ └── emotion_processed_test.csv
 │
-├── notebooks/
-│   ├── analysis.ipynb
-│   ├── logistic_regression.ipynb
-│   ├── tfidf_intuition.ipynb
-│   └── (exploratory & experimental notebooks)
+├── notebooks/ # exploratory & demo notebooks
+│ ├── analysis.ipynb
+│ ├── logistic_regression.ipynb
+│ ├── tfidf_intuition.ipynb
+│ └── inference_demo.ipynb
 │
-├── src/
-│   ├── data/
-│   │   ├── EDA_visual.py
-│   │   ├── feature_extraction.py
-│   │   └── preprocessing utilities
-│   │
-│   ├── models/
-│   │   ├── logistic_regression.py
-│   │   └── model-related logic
-│   │
-│   ├── utils/
-│   │   └── helper scripts (paths, loading, inspection)
-│   │
-│   └── __init__.py
+├── scripts_lr/ # Logistic Regression training & inference
+│ ├── train_save_final.py
+│ ├── infer.py
+│ └── infer_imdb.py
+│
+├── scripts_svm/ # SVM experiments
+│ ├── train_save_final_svm.py
+│ └── infer_svm.py
+│
+├── scripts_xgb/ # XGBoost experiments
+│ ├── train_save_final_xgb.py
+│ └── infer_xgb.py
+│
+├── src/ # reusable pipeline components
+│ ├── data/
+│ ├── features/
+│ ├── models/
+│ └── utils/
+│
+├── artifacts/ # generated after training
+│ ├── model.pkl
+│ ├── vectorizer.pkl
+│ ├── label_map.json
+│ ├── metrics.json
+│ ├── config.json
+│ └── predictions.json
 │
 ├── requirements.txt
 ├── .gitignore
@@ -56,75 +85,113 @@ Movie-review-emotion-classifier/
 
 ---
 
-## 🧪 Notebooks Overview
+##  Notebooks Overview
+
+The `notebooks/` directory contains exploratory, experimental and educational notebooks used during the development of the project.  
+These notebooks are **not required** to run the training or inference pipelines, but they document the full research process.
 
 ### `analysis.ipynb`
+- Main exploratory and experimental notebook
+- Dataset inspection and cleaning
+- Exploratory Data Analysis (EDA)
+- Feature engineering
+- Model training and evaluation
+- Confusion matrices and per-class metrics
 
-* End‑to‑end experimental notebook
-* Data loading and cleaning
-* Feature engineering
-* Model training & evaluation
-* Confusion matrices and per‑class metrics
+### `augmentation.ipynb`
+- Exploration of data augmentation techniques for text
+- Synonym-based augmentation experiments
+- Analysis of class balancing effects
 
 ### `logistic_regression.ipynb`
+- Logistic Regression experiments
+- TF-IDF with and without data augmentation
+- Comparison with GloVe and Word2Vec embeddings
+- Detailed classification reports and metrics
 
-* Logistic Regression experiments
-* TF‑IDF vs GloVe comparison
-* Detailed evaluation outputs
+### `svm_with_tfidf.ipynb`
+- Linear SVM experiments using TF-IDF features
+- Evaluation of SVM performance on the emotion classification task
+
+### `xgboost.ipynb`
+- XGBoost experiments with TF-IDF features
+- Performance comparison with linear models
 
 ### `tfidf_intuition.ipynb`
+- Educational notebook explaining TF-IDF
+- Step-by-step intuition and toy examples
+- Used to understand feature weighting behavior
 
-* Educational notebook
-* Explains how TF‑IDF works intuitively
-* Used for understanding feature behavior
+### `word2vec_intuition.ipynb`
+- Educational notebook for Word2Vec embeddings
+- Demonstrates how word vectors are formed and combined
+- Analysis of sentence-level representations via pooling
 
----
+### `glove_intuition_download_of_glove.6B.zip.ipynb`
+- Notebook documenting the download and loading of pretrained GloVe embeddings
+- Practical steps for integrating external embeddings
 
-## 🧠 Models Implemented
+### `glove_with_diff_class.ipynb`
+- Experiments with GloVe embeddings across different emotion classes
+- Analysis of embedding behavior per class
 
-### Logistic Regression
+### `inference_demo.ipynb`
+- Interactive inference demonstration
+- Applies the trained model to custom movie reviews
+- Displays predicted emotion labels and confidence scores
 
-Used as a strong baseline for text classification:
-
-* Works with **TF‑IDF vectors**
-* Works with **sentence‑level GloVe embeddings** (mean pooling)
-
-Evaluation includes:
-
-* Accuracy
-* Precision / Recall / F1 (per class)
-* Confusion matrices
-
----
-
-## 🔠 Text Representations
-
-### TF‑IDF
-
-* Sparse, high‑dimensional
-* Strong baseline for classical NLP
-* Typically outperforms simple averaged embeddings
-
-### GloVe Embeddings
-
-* Pretrained dense word vectors
-* Sentence vectors obtained via **mean pooling**
-* Lower dimensional but may lose contextual nuance
 
 ---
 
-## 📊 Evaluation Strategy
+##  Models Implemented
 
-* Train / test split performed **once** and reused across models
-* Vectorizers and embeddings are **fit only on training data**
-* Test data is strictly unseen
-* Evaluation focuses on **per‑emotion performance**, not just accuracy
+- **Logistic Regression** (baseline & best performing)
+- **Linear SVM**
+- **XGBoost**
+
+##  Feature Extraction
+
+### TF-IDF
+- Unigrams + bigrams
+- Sparse, high-dimensional representation
+- Strong baseline for classical NLP tasks
+
+### Word Embeddings
+- Pretrained **Word2Vec** and **GloVe**
+- Sentence representations via pooling
+- Lower dimensional but less expressive for this task
+
+---
+##  Evaluation Strategy
+
+- Fixed **train/test split**
+- All preprocessing, vectorization and augmentation applied **only on training data**
+- Test set remains strictly unseen
+- Main metric: **Macro-averaged F1-score**
+  - Suitable for imbalanced multiclass classification
 
 ---
 
-## ⚙️ Installation & Setup
+##  Best Performing Configuration
 
-```bash
+**TF-IDF (unigrams + bigrams) + Logistic Regression + Data Augmentation**
+
+- Accuracy: **0.8725**
+- Macro-averaged F1-score: **0.8252**
+
+** TF-IDF (unigrams + bigrams) + Linear SVM **
+
+- Accuracy: **0.8590**
+- Macro-averaged F1-score: **0.8009**
+
+**TF-IDF (unigrams + bigrams) + XGBOOST + Data Augmentation**
+
+- AccuracyQ **0.88**
+- Macro-averaged F1-score: **0.850141**
+
+
+##  Installation & Setup
+
 # Clone repository
 git clone https://github.com/TgDSML/Movie-review-emotion-classifier.git
 cd Movie-review-emotion-classifier
@@ -132,51 +199,69 @@ cd Movie-review-emotion-classifier
 # Create virtual environment
 python -m venv .venv
 
-# Activate
-# Windows
+# Activate virtual environment
+# Windows (PowerShell)
 .\.venv\Scripts\Activate.ps1
+
+# Windows (cmd)
+.\.venv\Scripts\activate
+
 # macOS / Linux
 source .venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
-```
 
 ---
 
-## 🚀 How to Run
+##  How to Run
 
-### Run notebooks
+### Train Models
 
-Open VS Code or Jupyter and run notebooks from the `notebooks/` directory.
+# Logistic Regression + TF-IDF + Augmentation
+python scripts_lr/train_save_final.py
 
-### Run scripts
+# Linear SVM + TF-IDF
+python scripts_svm/train_save_final_svm.py
 
-From project root:
-
-```bash
-python src/utils/inspect.py
-```
-
----
-
-## 📈 Project Status
-
-✅ Data preprocessing complete
-✅ TF‑IDF + Logistic Regression implemented
-✅ GloVe + Logistic Regression implemented
-✅ Detailed evaluation metrics added
-🚧 Ongoing experimentation & improvements
+# XGBoost + TF-IDF + Augmentation
+python scripts_xgb/train_save_final_xgb.py
 
 ---
 
-## 📌 Future Improvements
+##  Inference Demo on IMDb Reviews
 
-* Advanced pooling strategies for embeddings
-* Data augmentation for text
-* Regularization & hyperparameter tuning
+# IMDb movie reviews (Logistic Regression)
+python scripts_lr/infer_imdb.py
+
+# SVM inference
+python scripts_svm/infer_svm.py
+
+# XGBoost inference
+python scripts_xgb/infer_xgb.py
 
 ---
+
+## Artifacts & Outputs
+
+After training, the pipeline produces the following files:
+
+- model.pkl – trained classifier  
+- vectorizer.pkl – TF-IDF vectorizer  
+- label_map.json – mapping between label ids and emotion names  
+- metrics.json – evaluation metrics summary  
+- config.json – training configuration  
+- predictions.json – inference results produced during demo runs  
+
+---
+
+##  Reproducibility Notes
+
+- Random seeds are fixed where applicable to ensure reproducibility  
+- Data augmentation is applied only on the training set  
+- Test data is never used during feature fitting or model selection  
+
+
 
 
 
