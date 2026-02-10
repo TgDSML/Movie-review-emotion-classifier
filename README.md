@@ -22,7 +22,7 @@ The task is formulated as a **multiclass text classification problem** under cla
 
 ---
 
-## 📌 Project Objectives
+##  Project Objectives
 
 - Perform **emotion classification** on textual data
 - Compare different **text representations**:
@@ -34,7 +34,7 @@ The task is formulated as a **multiclass text classification problem** under cla
 
 ---
 
-## 📂 Repository Structure
+##  Repository Structure
 
 ```
 Movie-review-emotion-classifier/
@@ -130,6 +130,7 @@ These notebooks are **not required** to run the training or inference pipelines,
 ### `glove_intuition_download_of_glove.6B.zip.ipynb`
 - Notebook documenting the download and loading of pretrained GloVe embeddings
 - Practical steps for integrating external embeddings
+- MUST RUN in order to download from Stanford's Library the glove.6B.zip file which contains the word embeddings
 
 ### `glove_with_diff_class.ipynb`
 - Experiments with GloVe embeddings across different emotion classes
@@ -172,7 +173,7 @@ These notebooks are **not required** to run the training or inference pipelines,
 
 ---
 
-##  Best Performing Configuration
+##  Best Performing Configuration for each model
 
 **TF-IDF (unigrams + bigrams) + Logistic Regression + Data Augmentation**
 
@@ -214,9 +215,9 @@ pip install -r requirements.txt
 
 ---
 
-##  How to Run
+###  How to Run
 
-### Train Models
+## Train Models
 
 # Logistic Regression + TF-IDF + Augmentation
 python scripts_lr/train_save_final.py
@@ -260,6 +261,7 @@ After training, the pipeline produces the following files:
 - Random seeds are fixed where applicable to ensure reproducibility  
 - Data augmentation is applied only on the training set  
 - Test data is never used during feature fitting or model selection  
+
 
 
 
